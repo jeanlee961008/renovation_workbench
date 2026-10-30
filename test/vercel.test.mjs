@@ -1,0 +1,30 @@
+import {test,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtempSync,mkdirSync,writeFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {createVercelHandler} from '../api/index.mjs';
+const root=mkdtempSync(join(tmpdir(),'wb-vercel-'));
+mkdirSync(join(root,'files'));
+writeFileSync(join(root,'index.html'),'<!doctype html><h1>private workbench</h1>');
+const bytes=Buffer.alloc(17*1024*1024,65);bytes.write('%PDF');
+writeFileSync(join(root,'files/large.pdf'),bytes);
+after(()=>rmSync(root,{recursive:true,force:true}));
+const password='temporary-tests-password',secret='temporary-test-secret-32-characters-long';
+const request=(path,options={})=>new Request('https://test.vercel.app/api/index?wb_path='+encodeURIComponent(path),options);
+test('Vercel rewrite guards pages, direct files and function route',async()=>{
+ const run=createVercelHandler({root,password,secret});
+ for(const p of ['/','/files/large.pdf','/api/index','/private/index.html'])assert.equal((await run(request(p))).status,401);
+ assert.equal((await run(request('//other.example/login'))).status,400);
+ assert.equal((await run(request('/login',{method:'POST',headers:{origin:'https://other.example'},body:'password=incorrect'}))).status,403);
+});
+test('Vercel login preserves secure cookies; authenticated large files and ranges stream',async()=>{
+ const run=createVercelHandler({root,password,secret});
+ const login=await run(request('/login',{method:'POST',headers:{origin:'https://test.vercel.app'},body:new URLSearchParams({password})}));
+ assert.equal(login.status,303);assert.match(login.headers.get('set-cookie'),/Secure/);
+ const cookie=login.headers.get('set-cookie').split(';')[0];
+ const page=await run(request('/',{headers:{cookie}}));assert.equal(page.status,200);assert.match(await page.text(),/private workbench/);
+ const full=await run(request('/files/large.pdf',{headers:{cookie}}));assert.equal(full.status,200);assert.ok(full.body instanceof ReadableStream);assert.equal((await full.arrayBuffer()).byteLength,bytes.length);
+ const part=await run(request('/files/large.pdf',{headers:{cookie,range:'bytes=0-3'}}));assert.equal(part.status,206);assert.equal(await part.text(),'%PDF');
+ const logout=await run(request('/logout',{method:'POST',headers:{cookie,origin:'https://test.vercel.app'}}));assert.equal(logout.status,303);assert.match(logout.headers.get('set-cookie'),/Max-Age=0/);
+});

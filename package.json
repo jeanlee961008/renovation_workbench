@@ -7,7 +7,8 @@
   },
   "scripts": {
     "start": "node server.mjs",
-    "test": "node test/access.test.mjs",
-    "setup": "node scripts/setup.mjs"
+    "test": "node --test test/*.test.mjs",
+    "setup": "node scripts/setup.mjs",
+    "build:vercel": "node scripts/build-vercel.mjs"
   }
 }

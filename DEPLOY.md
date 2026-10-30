@@ -1,13 +1,16 @@
-# 部署说明
+# Vercel 部署
 
-本仓库发布的是密码保护服务器和脱敏模板，真实装修资料未提交。详细能力、限制和操作见 README.md。
+1. 登录 Vercel，导入 GitHub 仓库 jeanlee961008/renovation_workbench。
+2. 使用仓库根目录，框架选择 Other。vercel.json 指定构建 npm run build:vercel，公开输出目录 public。
+3. 在安全环境变量中填写 WORKBENCH_PASSWORD（至少12字符）及 WORKBENCH_SESSION_SECRET（至少32字符独立随机值），点击 Deploy。不要提交真实环境文件。
+4. 部署后先检查未登录页面和附件均被阻止，再验证登录、退出及分享。更新同一个项目可保持生产域名不变。
 
-推荐流程：在 Render 中连接本仓库，以 Blueprint 读取根目录 render.yaml；确认托管方案和费用，在安全环境变量中设置 WORKBENCH_PASSWORD。WORKBENCH_SESSION_SECRET 由平台生成。
+GitHub导入默认只有脱敏模板，没有真实附件。要恢复个人资料，必须使用包含private目录的私有部署包，或者另行配置私有存储，不能把个人资料加到公开Git历史。
 
-构建命令 npm run setup，启动命令 npm start，运行时 Node 20+，健康检查 /health。生产要求 NODE_ENV=production 和 HTTPS。密码至少12字符，建议16位以上随机密码；会话密钥至少32字符。不要把真实值写进Git或聊天。
+本地可通过官方Vercel CLI登录授权并部署；.vercelignore排除原始根目录的公开静态副本和ZIP，但允许private目录打包到服务函数。Vercel运行时包含私有页面和文件，不把它们复制到public。
 
-首次部署显示脱敏模板。真实项目文件应放在私有持久存储并维护相应页面入口；本版本不提供附件上传管理界面。将来重新部署同一服务，网站链接不变。
+附件采用流式响应；生产上的大附件读取和微信浏览器访问尚需实际上线验证。官方平台限制和方案费用以账号为准。
 
-Netlify Drop 和 GitHub Pages 不能运行此密码验证服务器。推送代码成功不代表网站已部署，也不会自动生成微信访问链接。共享密码仍可被转发，附件仍可被已获准的人保存。
+如果此前发布过静态公开版，请删除旧站点和旧公开部署。新服务不能保护旧链接。
 
-如果此前已发布静态公开版，应在原平台删除旧站点及其公开部署；新服务不能保护旧链接。
+详见README.md中的能力与限制。Render备用部署配置仍保留。

@@ -22,13 +22,23 @@ npm start
 
 `setup` 只在 `private/index.html` 不存在时从模板生成页面，已有私有内容不会被覆盖。真实资料需要放到私有部署存储，再维护 `private/index.html` 的对应入口；此仓库部署后默认只有脱敏模板，没有原来的合同和发票。
 
-## 部署与固定分享链接
+## 使用 Vercel 部署
 
-提供 Render Blueprint 配置 `render.yaml`。在 Render 连接此仓库，以 Blueprint 创建 Node Web Service；访问密码在平台填写，会话密钥由平台生成。建成后更新同一服务，网址不变。首次托管创建、费用确认、密码输入必须由账号所有者在平台完成。
+[在 Vercel 创建密码保护站点](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjeanlee961008%2Frenovation_workbench&env=WORKBENCH_PASSWORD%2CWORKBENCH_SESSION_SECRET&envDescription=%E8%AE%BE%E7%BD%AE%E8%AE%BF%E9%97%AE%E5%AF%86%E7%A0%81%EF%BC%88%E8%87%B3%E5%B0%9112%E5%AD%97%E7%AC%A6%EF%BC%89%E5%8F%8A%E7%8B%AC%E7%AB%8B%E9%9A%8F%E6%9C%BA%E4%BC%9A%E8%AF%9D%E5%AF%86%E9%92%A5%EF%BC%88%E8%87%B3%E5%B0%9132%E5%AD%97%E7%AC%A6%EF%BC%89%E3%80%82%E4%B8%8D%E8%A6%81%E6%8A%8A%E5%AF%86%E9%92%A5%E5%86%99%E8%BF%9B%E4%BB%A3%E7%A0%81%E3%80%82)
 
-也可使用其他 Node 托管：构建 `npm run setup`，启动 `npm start`，健康检查 `/health`。**不是静态站点，不能直接用 Netlify Drop 或 GitHub Pages 部署。** 当前仅发布代码，不代表已创建公网网站。
+已提供 vercel.json 及 api/index.mjs，选择 Other 框架即可；构建命令与输出目录由配置读取。公开静态目录 public/ 只允许 robots.txt，页面和附件只打包到经过鉴权的服务函数。
 
-服务配置和本地准备不代替持久存储：若托管文件系统在重新部署时清空，应通过私有持久卷或另行配置的私有文件存储保存真实资料。本版本没有实现上传管理界面或云存储同步。
+在 Vercel 安全环境变量中设置 WORKBENCH_PASSWORD（至少12字符，建议16位以上随机密码）和独立 WORKBENCH_SESSION_SECRET（至少32字符随机值），然后部署。不要把真实密码发到聊天、写进Git或加入链接。未配置返回503，不能访问文件。更换密码/密钥后需要重新部署。
+
+从 GitHub 导入会使用脱敏模板，不会自动取得真实合同、发票、施工图和账单。本地原始内容可通过授权后的 Vercel CLI 部署到鉴权函数包中；.vercelignore 保留 private/，而 .gitignore 仍排除它，避免真实内容进入Git。更新项目现有的生产部署，固定域名保持不变。
+
+附件使用 Node ReadableStream 响应并保留 Range/HEAD 支持，已本地验证17MB读取；Vercel生产环境的函数限制、请求响应大小、执行时长和平台带宽计费仍需上线后核验，不应将本地通过称为云端附件验证。函数文件系统只读，真实文件需要随私有部署包重新部署；没有文件上传管理界面或云存储同步。
+
+如 Vercel 项目本身还启用了团队身份验证保护，分享者可能需要Vercel账号；如需家人仅输入工作台密码，应在项目 Deployment Protection 中确认生产域名没有额外的 Vercel Authentication。保留本项目自己的密码验证。
+
+当前配置不代表站点已在你的 Vercel 账号上线。首次账号授权和环境变量填写需要在Vercel完成。不能用Netlify Drop或GitHub Pages运行此服务器。
+
+也保留 Render Blueprint 配置作为其他 Node 托管方式：构建 npm run setup，启动 npm start，健康检查 /health。
 
 ## 权限及限制
 

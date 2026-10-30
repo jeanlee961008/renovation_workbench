@@ -1,0 +1,11 @@
+.git/
+.vercel/
+.env
+.env.*
+secure-site/
+files/
+assets/
+index.html
+*.zip
+node_modules/
+test/
