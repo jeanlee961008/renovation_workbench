@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: private-renovation-workbench
+    runtime: node
+    buildCommand: npm run setup
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WORKBENCH_PASSWORD
+        sync: false
+      - key: WORKBENCH_SESSION_SECRET
+        generateValue: true

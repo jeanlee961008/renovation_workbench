@@ -1,0 +1,14 @@
+# Private project data and locally generated packages must never enter Git history.
+private/
+secure-site/
+assets/
+files/
+index.html
+*.zip
+.env
+.env.*
+!.env.example
+node_modules/
+.netlify/
+.DS_Store
+!templates/index.html

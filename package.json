@@ -1,0 +1,13 @@
+{
+  "name": "private-renovation-workbench",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/access.test.mjs",
+    "setup": "node scripts/setup.mjs"
+  }
+}
