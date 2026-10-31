@@ -1,7 +1,7 @@
 # Vercel 部署
 
 1. 登录 Vercel，导入 GitHub 仓库 jeanlee961008/renovation_workbench。
-2. 使用仓库根目录，框架选择 Other。vercel.json 指定构建 npm run build:vercel，公开输出目录 public。
+2. 使用仓库根目录。vercel.json 使用 workbench 服务，入口 server.mjs，Node 22，构建命令 npm run setup。所有路径进入服务端密码验证。
 3. 在安全环境变量中填写 WORKBENCH_PASSWORD（至少12字符）及 WORKBENCH_SESSION_SECRET（至少32字符独立随机值），点击 Deploy。不要提交真实环境文件。
 4. 部署后先检查未登录页面和附件均被阻止，再验证登录、退出及分享。更新同一个项目可保持生产域名不变。
 

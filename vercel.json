@@ -1,15 +1,24 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "buildCommand": "npm run build:vercel",
-  "outputDirectory": "public",
-  "functions": {
-    "api/index.mjs": {
-      "includeFiles": "private/**",
-      "maxDuration": 60
+  "services": {
+    "workbench": {
+      "root": ".",
+      "entrypoint": "server.mjs",
+      "buildCommand": "npm run setup",
+      "functions": {
+        "server.mjs": {
+          "includeFiles": "private/**",
+          "maxDuration": 60
+        }
+      }
     }
   },
   "rewrites": [
-    { "source": "/:path*", "destination": "/api/index?wb_path=/:path*" }
+    {
+      "source": "/:path*",
+      "destination": {
+        "service": "workbench"
+      }
+    }
   ]
 }

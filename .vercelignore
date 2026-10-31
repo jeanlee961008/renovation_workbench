@@ -3,9 +3,9 @@
 .env
 .env.*
 secure-site/
-files/
-assets/
-index.html
+/files/
+/assets/
+/index.html
 *.zip
 node_modules/
 test/

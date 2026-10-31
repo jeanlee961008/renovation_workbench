@@ -10,7 +10,7 @@
 
 ## 开发
 
-需要 Node.js 20+，不依赖第三方运行包。
+需要 Node.js 22，不依赖第三方运行包。
 
 ```sh
 npm run setup
@@ -26,7 +26,7 @@ npm start
 
 [在 Vercel 创建密码保护站点](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjeanlee961008%2Frenovation_workbench&env=WORKBENCH_PASSWORD%2CWORKBENCH_SESSION_SECRET&envDescription=%E8%AE%BE%E7%BD%AE%E8%AE%BF%E9%97%AE%E5%AF%86%E7%A0%81%EF%BC%88%E8%87%B3%E5%B0%9112%E5%AD%97%E7%AC%A6%EF%BC%89%E5%8F%8A%E7%8B%AC%E7%AB%8B%E9%9A%8F%E6%9C%BA%E4%BC%9A%E8%AF%9D%E5%AF%86%E9%92%A5%EF%BC%88%E8%87%B3%E5%B0%9132%E5%AD%97%E7%AC%A6%EF%BC%89%E3%80%82%E4%B8%8D%E8%A6%81%E6%8A%8A%E5%AF%86%E9%92%A5%E5%86%99%E8%BF%9B%E4%BB%A3%E7%A0%81%E3%80%82)
 
-已提供 vercel.json 及 api/index.mjs，选择 Other 框架即可；构建命令与输出目录由配置读取。公开静态目录 public/ 只允许 robots.txt，页面和附件只打包到经过鉴权的服务函数。
+已提供 vercel.json：使用 Vercel Services 的 workbench 服务，入口 server.mjs，Node 22，构建命令 npm run setup。所有请求直接进入 Node 密码验证服务；不公开静态资料目录。api/index.mjs 保留为可测试的函数适配器，但当前服务部署不使用它。
 
 在 Vercel 安全环境变量中设置 WORKBENCH_PASSWORD（至少12字符，建议16位以上随机密码）和独立 WORKBENCH_SESSION_SECRET（至少32字符随机值），然后部署。不要把真实密码发到聊天、写进Git或加入链接。未配置返回503，不能访问文件。更换密码/密钥后需要重新部署。
 
@@ -45,3 +45,5 @@ npm start
 登录有效期7天；Cookie 使用 HttpOnly、生产 Secure 和 SameSite=Lax。更换密码或密钥并重启/重新部署会使旧登录失效。共享密码可被转发；获准访问者仍能截图和下载。单进程IP登录失败限流为10次/15分钟，跨实例统一防护应由托管平台WAF提供。未声称经过第三方安全审计或微信真机测试。
 
 `npm test` 使用临时测试文件，不需要真实附件：覆盖未登录访问、密码验证、跨站与过大提交、Cookie标志、附件读取与PDF Range/HEAD、过期或篡改会话、改密撤销、路径穿越及退出。此前也已在本地真实HTTP服务器验证手机登录、17MB附件完整读取与退出拦截。
+
+当前 Vercel 项目名 renovation-workbench，已建立账号绑定。CLI 部署以项目为单位更新生产链接。完整资料的首次外传仍需单独明确授权；已有成功的账号授权不等于允许上传合同等敏感资料。
