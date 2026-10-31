@@ -9,6 +9,7 @@
     "start": "node server.mjs",
     "test": "node --test test/*.test.mjs",
     "setup": "node scripts/setup.mjs",
-    "build:vercel": "node scripts/build-vercel.mjs"
+    "build:vercel": "node scripts/build-vercel.mjs",
+    "ui:sync": "node scripts/sync-ui.mjs"
   }
 }
