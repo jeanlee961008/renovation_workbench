@@ -15,7 +15,7 @@
   },
   "rewrites": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "destination": {
         "service": "workbench"
       }
